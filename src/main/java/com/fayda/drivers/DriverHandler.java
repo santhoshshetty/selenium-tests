@@ -21,9 +21,9 @@ public class DriverHandler {
             chromePrefs.put("profile.password_manager_leak_detection", false);
             final ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless=new");          // run without UI
-            options.addArguments("--no-sandbox");            // required in CI
+        /*    options.addArguments("--no-sandbox");            // required in CI
             options.addArguments("--disable-dev-shm-usage"); // prevent crashes
-            options.addArguments("--disable-gpu");           // safe for headless
+            options.addArguments("--disable-gpu"); */          // safe for headless
             options.addArguments("--remote-allow-origins=*");
             options.setExperimentalOption("prefs", chromePrefs);
             driver = new ChromeDriver(options);
