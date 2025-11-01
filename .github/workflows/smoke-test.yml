@@ -3,9 +3,9 @@ name: Run Selenium Tests
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, develop ]
 
 jobs:
   selenium-test:
@@ -22,20 +22,22 @@ jobs:
           java-version: '21'
 
       - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v2
+        uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
-
-      - name: Verify Chrome installation
-        run: google-chrome --version
 
       - name: Set up ChromeDriver
         uses: nanasess/setup-chromedriver@v2
 
-      - name: Build and Run Tests
+      - name: Verify Installation
+        run: |
+          google-chrome --version
+          chromedriver --version
+
+      - name: Run Tests
         run: mvn clean test
 
-      - name: Upload Test Reports
+      - name: Upload Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
