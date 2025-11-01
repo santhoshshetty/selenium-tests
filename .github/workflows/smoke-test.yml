@@ -1,33 +1,43 @@
-name: Selenium Java Tests
+name: Run Selenium Tests
 
 on:
+  workflow_dispatch:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
 jobs:
-  selenium:
+  selenium-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 21
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
-          cache: maven
+          distribution: temurin
+          java-version: '17'
 
-      - name: Install Google Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable || sudo apt-get install -y chromium-browser
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v2
+        with:
+          chrome-version: stable
 
-      - name: Build project
-        run: mvn -B clean install -DskipTests
+      - name: Verify Chrome installation
+        run: google-chrome --version
 
-      - name: Run Selenium Tests
-        run: |
-          rm -rf /tmp/*
-          mvn -B test
+      - name: Set up ChromeDriver
+        uses: nanasess/setup-chromedriver@v2
+
+      - name: Build and Run Tests
+        run: mvn clean test
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: target/surefire-reports/
